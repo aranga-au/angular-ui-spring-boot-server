@@ -1,0 +1,88 @@
+import org.apache.tools.ant.taskdefs.condition.Os
+
+buildscript {
+	ext {
+		springBootVersion = '1.4.0.M1'
+	}
+	repositories {
+		mavenCentral()
+		maven { url "https://repo.spring.io/snapshot" }
+		maven { url "https://repo.spring.io/milestone" }
+	}
+	dependencies {
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}") 
+	}
+}
+
+apply plugin: 'java'
+apply plugin: 'spring-boot'
+
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+repositories {
+	mavenCentral()
+	maven { url "https://repo.spring.io/snapshot" }
+	maven { url "https://repo.spring.io/milestone" }
+}
+
+sourceSets {
+	main {
+		java {
+			exclude '.src/main/resources/static/**'
+		}
+	}
+}
+
+dependencies {
+	//compile('org.springframework.cloud:spring-cloud-starter-config')
+	//compile('org.springframework.cloud:spring-cloud-starter-ribbon')
+	//compile('org.springframework.cloud:spring-cloud-starter-zuul')
+	compile('org.springframework.boot:spring-boot-starter-web')
+	testCompile('org.springframework.boot:spring-boot-starter-test') 
+}
+
+dependencyManagement {
+	imports { 
+		mavenBom "org.springframework.cloud:spring-cloud-dependencies:Brixton.BUILD-SNAPSHOT" 
+	}
+}
+
+
+task runBowerInstall(type: Exec){
+	println "download javascript libraries "
+
+	if (Os.isFamily(Os.FAMILY_WINDOWS))
+		commandLine = ["cmd", "/c", "npm", "install"]
+	else
+		commandLine = ["npm", "install","--allow-root"]
+
+
+}
+task buildAngular(type: Exec,dependsOn:runBowerInstall){
+	println "running gulp build tool  "
+
+	if (Os.isFamily(Os.FAMILY_WINDOWS))
+		commandLine = ["cmd", "/c", "gulp","build"]
+	else
+		commandLine = ["gulp","build"]
+
+
+}
+task copyAngular(type: Copy,dependsOn:buildAngular) {
+	from 'build/angular'
+	into 'build/resources/static'
+}
+
+jar {
+	baseName = 'UIApp'
+	version = '0.0.1'
+	doFirst{
+		copyAngular
+	}
+}
+
+task wrapper(type: Wrapper) {
+	gradleVersion = '2.9'
+}

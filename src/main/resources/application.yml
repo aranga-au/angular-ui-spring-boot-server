@@ -1,0 +1,13 @@
+--- # server port config (dynamically allocate)
+server:
+     port: 0
+
+security:
+    user:
+        password: password
+--- # application
+spring:
+    application:
+        name : ui-server
+    resources:
+      static-locations: classpath:/client/

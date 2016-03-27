@@ -1,0 +1,17 @@
+
+<div ng-controller="MainController as vm">
+	<header>
+		
+		<div class="navbar">
+			<ul class="nav nav-pills">
+				<li ng-repeat="item in vm.menuItems">
+					<a ui-sref="{{item.url}}" ng-bind-html="item.label"  ng-class="vm.isCurrent(item.label)"></a>
+				<li>	
+			</ul>
+		</div>
+	</header>
+	
+	<section class="container" style="margin-top:20px;">
+		<div ui-view ></div>
+	</section>
+</div>

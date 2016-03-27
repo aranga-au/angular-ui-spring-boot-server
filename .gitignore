@@ -1,0 +1,9 @@
+# Build and Release Folders
+.idea
+build
+.tmp
+node_modules
+bower_components
+typings
+.vscode
+tmp
