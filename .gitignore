@@ -1,4 +1,5 @@
 # Build and Release Folders
+.gradle
 .idea
 build
 .tmp
