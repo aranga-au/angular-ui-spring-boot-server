@@ -1,6 +1,6 @@
 --- # server port config (dynamically allocate)
 server:
-     port: 0
+     port: 3000
 
 security:
     user:
