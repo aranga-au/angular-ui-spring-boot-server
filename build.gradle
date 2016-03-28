@@ -30,7 +30,7 @@ repositories {
 sourceSets {
 	main {
 		java {
-			exclude '.src/main/resources/static/**'
+			exclude '.src/main/resources/client/**'
 		}
 	}
 }
