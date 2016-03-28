@@ -8,15 +8,20 @@ buildscript {
 		mavenCentral()
 		maven { url "https://repo.spring.io/snapshot" }
 		maven { url "https://repo.spring.io/milestone" }
+		maven { url "https://plugins.gradle.org/m2/"  }
+		
 	}
 	dependencies {
-		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}") 
+		classpath("org.springframework.boot:spring-boot-gradle-plugin:${springBootVersion}")
+		classpath("com.moowork.gradle:gradle-node-plugin:0.12")	
+		classpath("com.moowork.gradle:gradle-gulp-plugin:0.12")
 	}
 }
 
 apply plugin: 'java'
 apply plugin: 'spring-boot'
-
+apply plugin: 'com.moowork.node'
+apply plugin: 'com.moowork.gulp'
 
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
@@ -27,13 +32,7 @@ repositories {
 	maven { url "https://repo.spring.io/milestone" }
 }
 
-sourceSets {
-	main {
-		java {
-			exclude '.src/main/resources/client/**'
-		}
-	}
-}
+
 
 dependencies {
 	//compile('org.springframework.cloud:spring-cloud-starter-config')
@@ -48,41 +47,30 @@ dependencyManagement {
 		mavenBom "org.springframework.cloud:spring-cloud-dependencies:Brixton.BUILD-SNAPSHOT" 
 	}
 }
-
-
-task runBowerInstall(type: Exec){
-	println "download javascript libraries "
-
-	if (Os.isFamily(Os.FAMILY_WINDOWS))
-		commandLine = ["cmd", "/c", "npm", "install"]
-	else
-		commandLine = ["npm", "install","--allow-root"]
-
-
+sourceSets {
+	main {
+		resources {
+			exclude './src/main/resources/client/**'
+		}
+	}
 }
-task buildAngular(type: Exec,dependsOn:runBowerInstall){
-	println "running gulp build tool  "
 
-	if (Os.isFamily(Os.FAMILY_WINDOWS))
-		commandLine = ["cmd", "/c", "gulp","build"]
-	else
-		commandLine = ["gulp","build"]
-
-
+task buildAngular(type: GulpTask,dependsOn:npmInstall){
+	args = ["build"]
 }
 task copyAngular(type: Copy,dependsOn:buildAngular) {
-	from 'build/angular'
-	into 'build/resources/static'
+	from 'build/clientApp'
+	into 'build/resources/main/client'
+}
+
+
+task wrapper(type: Wrapper) {
+	gradleVersion = '2.9'
 }
 
 jar {
 	baseName = 'UIApp'
 	version = '0.0.1'
-	doFirst{
-		copyAngular
-	}
-}
 
-task wrapper(type: Wrapper) {
-	gradleVersion = '2.9'
 }
+jar.dependsOn copyAngular
