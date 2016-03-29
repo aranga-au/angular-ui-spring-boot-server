@@ -1,14 +1,20 @@
-import org.apache.tools.ant.taskdefs.condition.Os
-
+//spring boot app
+//copyright Aranga Nanayakkara
 buildscript {
 	ext {
 		springBootVersion = '1.4.0.M1'
 	}
 	repositories {
 		mavenCentral()
-		maven { url "https://repo.spring.io/snapshot" }
-		maven { url "https://repo.spring.io/milestone" }
-		maven { url "https://plugins.gradle.org/m2/"  }
+		maven {
+            url "https://repo.spring.io/snapshot"
+        }
+		maven {
+            url "https://repo.spring.io/milestone"
+        }
+		maven {
+            url "https://plugins.gradle.org/m2/"
+        }
 		
 	}
 	dependencies {
@@ -48,11 +54,12 @@ dependencyManagement {
 	}
 }
 sourceSets {
-	main {
-		resources {
-			exclude './src/main/resources/client/**'
-		}
-	}
+    main {
+        resources {
+            exclude '**/bower_components'
+			exclude '**/tmp'
+        }
+    }
 }
 
 task buildAngular(type: GulpTask,dependsOn:npmInstall){
@@ -69,8 +76,19 @@ task wrapper(type: Wrapper) {
 }
 
 jar {
-	baseName = 'UIApp'
-	version = '0.0.1'
-
+	baseName = 'ui-app'
+    String tag =java.lang.System.getProperty("TAG")
+    if (tag == null)
+    {
+        tag = '0.0.1'
+    }
+	version = tag
+	exclude '**/app'
+	exclude '**/*.less'
 }
+/*
+springBoot {
+	executable = true
+}*/
+
 jar.dependsOn copyAngular
