@@ -90,5 +90,5 @@ jar {
 springBoot {
 	executable = true
 }*/
-
+//execute before jar creation
 jar.dependsOn copyAngular

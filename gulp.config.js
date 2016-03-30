@@ -27,7 +27,7 @@ module.exports = function() {
             './*.js'
         ],
         assetTemp:assetTemp,
-        vetjs:['./src/main/resources/app/*.js'],
+        vetjs:['./src/main/resources/client/app/*.js'],
         build: buildDir,
         client: client,
         css: assetTemp+'styles.css',
