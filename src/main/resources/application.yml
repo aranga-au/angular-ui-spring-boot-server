@@ -1,13 +1,36 @@
---- # server port config (dynamically allocate)
 server:
-     port: 3000
+  port: ${app.selected.port}
 
-security:
-    user:
-        password: password
---- # application
+---
+management:
+  context-path: /manage
+
+---
+info:
+  component: ${spring.application.name}
+  version: 1.0.0
+  tag: 1.3.beta1
+  appInstanceId: ${app.unique.id}
+  port: ${app.selected.port}
+  ipAdr: ${app.ipaddr}
+
+
 spring:
-    application:
-        name : ui-server
-    resources:
-      static-locations: classpath:/client/
+  resources:
+    static-locations: classpath:/client/
+
+--- #eureka discovery configuration
+eureka:
+  leaseRenewalIntervalInSeconds: 1
+  leaseExpirationDurationInSeconds: 1
+  initialInstanceInfoReplicationIntervalSeconds: 1
+  instance:
+    statusPageUrlPath: ${management.context-path}/info
+    healthCheckUrlPath: ${management.context-path}/health
+    instanceId: ${app.unique.id}:::${app.ipaddr}:${app.selected.port}
+  client:
+
+    # Default values comes from org.springframework.cloud.netflix.eurek.EurekaClientConfigBean
+    registryFetchIntervalSeconds: 60
+    instanceInfoReplicationIntervalSeconds: 60
+    initialInstanceInfoReplicationIntervalSeconds: 1
